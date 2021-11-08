@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect
 #An ORM converts data between incompatible systems (object structure in Python, table structure in SQL database)
-#QLAlchemy gives you a skill set that can be applied to any SQL database system.
+#SQLAlchemy gives you a skill set that can be applied to any SQL database system.
 from flaskFile.forms import RegistrationForm, LoginForm, Ride
 from flaskFile.models import User, Post
 from flaskFile import app, db, bcrypt
@@ -29,7 +29,6 @@ def home():
 def find_ride():
     form = Ride()
     if form.validate_on_submit():
-        flash(f'Results are:')
         return redirect(url_for('result'))
     return render_template('find_ride.html', title='Find-Ride', form=form)
 
@@ -45,11 +44,12 @@ def privacy_policy():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        flash('Welcome to Co-Ride', 'info')
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
 
 
@@ -59,6 +59,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
+            flash('Login successful', 'info')
             return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')

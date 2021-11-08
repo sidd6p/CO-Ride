@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flaskFile.models import User
 
@@ -36,5 +36,5 @@ class Ride(FlaskForm):
     source = StringField('Source', validators=[DataRequired()])
     destination = StringField('Destination', validators=[DataRequired()])
     date = StringField('Date of Journey', validators=[DataRequired()])
-    preference = StringField('Preference')
+    preference = SelectField('Preference', choices=['', 'Rating', 'Verified'])
     submit = SubmitField('Find Ride')
