@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h3>Results are</h3><br>
+    {% for post in posts %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              {% if post.Verify %}
+                <a><h4 style="color: #2b2b2bd2;">{{ post.Username }} <span class="vertify-text">vertified</h4></a>
+              {% else %}
+                <a><h4 style="color: #2b2b2bd2;">{{ post.Username }}</h4></a>
+              {% endif %}
+              <a><h4 style="color: #2b2b2bd2;">{{ post.Rating }}</h4></a><br>
+              <a href="mailto:{{ post.Email }}"><p class="btn btn-outline-info">Send Request</p></a>
+        </article>
+    {% endfor %}
+{% endblock content %}
