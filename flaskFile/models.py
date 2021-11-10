@@ -1,9 +1,14 @@
 from datetime import datetime
 from flaskFile import db
+from flaskFile import loginManager
+from flask_login import UserMixin
 
+@loginManager.user_loader
+def loadUser(userId):
+    return User.query.get(int(userId))
 
 #a model is typically a Python class with attributes that match the columns of a corresponding database table.
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)

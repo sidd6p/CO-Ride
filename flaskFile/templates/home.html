@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="home-styles-1">
-        Travel with ease With your Mate
+        <h1>Travel with ease With your Mate</h1>
     </div>
-    <a class="style-button btn btn-outline-info" href="{{ url_for('find_ride') }}">Share Ride Now</a>
+    <br>
+    <div style="text-align:center;">
+        <a href="{{ url_for('find_ride') }}"><button class="style-button"><h1>Share Ride Now</h1></button></a>
+    </div>
 {% endblock content %}

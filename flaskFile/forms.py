@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from flaskFile.models import User
 
 #inherited from FlaskForm class
@@ -35,6 +35,6 @@ class LoginForm(FlaskForm):
 class Ride(FlaskForm):
     source = StringField('Source', validators=[DataRequired()])
     destination = StringField('Destination', validators=[DataRequired()])
-    date = StringField('Date of Journey', validators=[DataRequired()])
+    date = DateField('Start Date', format='%m/%d/%Y', validators=[DataRequired()])
     preference = SelectField('Preference', choices=['', 'Rating', 'Verified'])
     submit = SubmitField('Find Ride')

@@ -3,6 +3,7 @@ from flask import Flask, render_template, url_for, flash, redirect
 #SQLAlchemy gives you a skill set that can be applied to any SQL database system.
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 
 app = Flask(__name__)
 #config is a sub class of dictionary 
@@ -15,5 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name
 #SQLAlchemy is a class constructor with app as parameter
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-
+loginManager = LoginManager(app)
+loginManager.login_view = 'login'
+loginManager.login_message_category = 'warning'
 from flaskFile import routes
