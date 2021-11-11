@@ -101,4 +101,5 @@ def account():
         flash('Login Required to access Account page', 'warning')
         return redirect(url_for('login'))
     """
-    return render_template('account.html', title=current_user.username)
+    imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('account.html', title=current_user.username, imageFile=imageFile)
