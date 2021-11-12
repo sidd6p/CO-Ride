@@ -40,8 +40,8 @@ class Ride(FlaskForm):
     preference = SelectField('Preference', choices=['', 'Rating', 'Verified'])
     submit = SubmitField('Find Ride')
 
-    def validate_destination(self, source):
-        if source == self.destination:
+    def validate_destination(self, destination):
+        if self.source.data == self.destination.data:
             raise ValidationError("Destination and Source cannot be same")
 
 
