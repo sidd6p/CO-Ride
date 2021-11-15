@@ -2,10 +2,16 @@ from flask import render_template, url_for, flash, redirect, request
 import flask
 #An ORM converts data between incompatible systems (object structure in Python, table structure in SQL database)
 #SQLAlchemy gives you a skill set that can be applied to any SQL database system.
-from flaskFile.forms import RegistrationForm, LoginForm, Ride
+from flaskFile.forms import RegistrationForm, LoginForm, Ride, UpdateAccountForm
 from flaskFile.models import User, Post
 from flaskFile import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
+from urllib.parse import urlparse, urljoin
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and  ref_url.netloc == test_url.netloc
 
 
 posts = [
@@ -75,6 +81,8 @@ def login():
             login_user(user, remember=form.remember.data)
             flash('Login successful', 'info')
             nextPage = request.args.get('next')
+            if not is_safe_url(nextPage):
+                return flash.abort(400)
             return redirect(nextPage) if nextPage else redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -91,7 +99,7 @@ def result():
     return render_template('result.html', title='Result', posts=posts)
 
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     """
@@ -101,5 +109,11 @@ def account():
         flash('Login Required to access Account page', 'warning')
         return redirect(url_for('login'))
     """
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Account Updated Successfully', 'info')
     imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title=current_user.username, imageFile=imageFile)
+    return render_template('account.html', title=current_user.username, imageFile=imageFile, form=form)
