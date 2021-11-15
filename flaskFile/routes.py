@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request
 import flask
 #An ORM converts data between incompatible systems (object structure in Python, table structure in SQL database)
 #SQLAlchemy gives you a skill set that can be applied to any SQL database system.
-from flaskFile.forms import RegistrationForm, LoginForm, Ride
+from flaskFile.forms import RegistrationForm, LoginForm, Ride, UpdateAccountForm
 from flaskFile.models import User, Post
 from flaskFile import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
@@ -91,7 +91,7 @@ def result():
     return render_template('result.html', title='Result', posts=posts)
 
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     """
@@ -101,5 +101,10 @@ def account():
         flash('Login Required to access Account page', 'warning')
         return redirect(url_for('login'))
     """
+    form=UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data or current_user.username
+        current_user.email = form.email.data or current_user.email
+        db.session.commit()
     imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title=current_user.username, imageFile=imageFile)
+    return render_template('account.html', title=current_user.username, imageFile=imageFile, form=form)

@@ -1,22 +1,72 @@
 {% extends "layout.html" %}
 {% block content %}
-  <div class="content-section">
-    <div class="media">
-      <img class="rounded-circle account-img" title="My Image" src="{{ imageFile }}">
-      <div class="media-body">
-        <h2 class="account-heading">{{ current_user.username }}</h2>
-        <p class="text-secondary">{{ current_user.email }}</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm col-md-6">
+        <div class="content-section">
+          <div class="media">
+            <img class="rounded-circle account-img" title="My Image" src="{{ imageFile }}">
+            <div class="media-body">
+              <h2 class="account-heading">{{ current_user.username }}</h2>
+              <p class="text-secondary">{{ current_user.email }}</p>
+           </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="content-section">
-    <p class='text-muted'>
-      <ul class="list-group">
-        <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Upcoming Ride</li>
-        <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Cab-Sharing Requests</li>
-        <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Last Ride</li>
-        <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Your Raiting</li>
-      </ul>
-    </p>
+      <div class="col-sm col-md-4">
+        <div class="content-section">
+          <p class='text-muted'>
+            <ul class="list-group">
+              <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Change Profile</li>
+              <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Upcoming Ride</li>
+              <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Cab-Sharing Requests</li>
+              <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Last Ride</li>
+              <li style="color: #2b2b2bd2; font-size: 20px;" class="list-group-item list-group-item-light side-view">Your Raiting</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+    <div class="row">
+      <div class="col-sm col-md">
+        <div class="content-section">
+          <form method="POST" action="">
+              {{ form.hidden_tag() }}
+              <fieldset class="form-group">
+                  <legend class="border-bottom mb-4">Update Account</legend>
+                  <div class="form-group">
+                      {{ form.username.label(class="form-control-label") }}
+                      {% if form.username.errors %}
+                          {{ form.username(class="form-control form-control-lg is-invalid") }}
+                          <div class="invalid-feedback">
+                              {% for error in form.username.errors %}
+                                  <span>{{ error }}</span>
+                              {% endfor %}
+                          </div>
+                      {% else %}
+                          {{ form.username(class="form-control form-control-lg") }}
+                      {% endif %}
+                  </div>
+                  <div class="form-group">
+                      {{ form.email.label(class="form-control-label") }}
+                      {% if form.email.errors %}
+                          {{ form.email(class="form-control form-control-lg is-invalid") }}
+                          <div class="invalid-feedback">
+                              {% for error in form.email.errors %}
+                                  <span>{{ error }}</span>
+                              {% endfor %}
+                          </div>
+                      {% else %}
+                          {{ form.email(class="form-control form-control-lg") }}
+                      {% endif %}
+                  </div>
+              </fieldset>
+              <div class="form-group">
+                  {{ form.submit(class="btn btn-outline-info") }}
+              </div>
+            </form>
+          </div>       
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock content%}
