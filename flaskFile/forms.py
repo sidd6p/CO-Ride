@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from flaskFile.models import User
@@ -46,11 +47,9 @@ class Ride(FlaskForm):
 
 
 class UpdateAccountForm(FlaskForm):
-    #The SubmitField class represents an <input> element with a type="submit" attribute.
-    # The first argument to the Field constructors is the label that will be used when rendering the form to HTML.
-    #These are the attributes of RegestrationForm class
     username = StringField('Username', validators=[Length(min=2, max=20)])
     email = StringField('Email', validators=[Email()])
+    picture = FileField("Profile picture", validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
