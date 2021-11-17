@@ -135,3 +135,5 @@ dmypy.json
 *.jpg
 *.jpeg
 *.png
+!static/profile_pics/default.jpg
+!static/other_images

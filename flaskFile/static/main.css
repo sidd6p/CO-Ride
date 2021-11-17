@@ -98,7 +98,14 @@ footer {
   color: #059b9b;
   font-weight: bold;
   margin-bottom: 100px;
-  margin-top: 200px;
+  margin-top: 150px;
+}
+
+.image{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
 }
 
 .style-button{

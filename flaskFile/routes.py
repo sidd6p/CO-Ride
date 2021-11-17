@@ -6,7 +6,7 @@ from PIL import Image
 #An ORM converts data between incompatible systems (object structure in Python, table structure in SQL database)
 #SQLAlchemy gives you a skill set that can be applied to any SQL database system.
 from flaskFile.forms import RegistrationForm, LoginForm, Ride, UpdateAccountForm
-from flaskFile.models import User, Post
+from flaskFile.models import User,UserRide
 from flaskFile import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -41,6 +41,12 @@ def find_ride():
     """
     form = Ride()
     if form.validate_on_submit():
+        try: 
+            ride = UserRide(source=form.source.data, destination=form.destination.data, dateOfRide=form.date.data, preference=form.preference.data, userId=current_user.id)
+            db.session.add(ride)
+            db.session.commit()
+        except:
+            return redirect(url_for('error'))
         return redirect(url_for('result'))
     return render_template('find_ride.html', title='Find-Ride', form=form)
 
@@ -133,3 +139,8 @@ def account():
         form.email.data = current_user.email
     imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title=current_user.username, imageFile=imageFile, form=form)
+
+
+@app.route('/error')
+def error():
+    return render_template('error.html')
