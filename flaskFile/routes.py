@@ -3,42 +3,21 @@ import flask
 import os
 import secrets
 from PIL import Image
-#An ORM converts data between incompatible systems (object structure in Python, table structure in SQL database)
-#SQLAlchemy gives you a skill set that can be applied to any SQL database system.
-from flaskFile.forms import RegistrationForm, LoginForm, Ride, UpdateAccountForm
-from flaskFile.models import User,UserRide
+from flaskFile.forms import RegistrationForm, LoginForm, Ride, UpdateAccountForm, MyFeedback
+from flaskFile.models import User,UserRide, UserReviews
 from flaskFile import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-
-
-posts = [
-    {
-        'Username': 'Sidp6',
-        'Email': 'Sidp6@gmail.com',
-        'Rating': '4/5',
-        'Verify': 'true'
-    },
-    {
-        'Username': 'Sidp12',
-        'Email': 'Sidp12@gmail.com',
-        'Rating': '3.8/5',
-        'Verify': ''
-    }
-]
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
     return render_template('home.html', title="Co-Ride")
 
-@app.route("/find_ride", methods=['GET', 'POST'])
+
+
+@app.route("/find-ride", methods=['GET', 'POST'])
 @login_required
-def find_ride():
-    """
-    if not current_user.is_authenticated:
-        flash('Login Required to access Account page', 'warning')
-        return redirect(url_for('login'))
-    """
+def findRide():
     form = Ride()
     if form.validate_on_submit():
         try: 
@@ -48,15 +27,19 @@ def find_ride():
         except:
             return redirect(url_for('error'))
         return redirect(url_for('result'))
-    return render_template('find_ride.html', title='Find-Ride', form=form)
+    return render_template('find-ride.html', title='Find-Ride', form=form)
+    
+@app.route("/result")
+@login_required
+def result():
+    try:
+        myride = UserRide.query.first()
+        rides = UserRide.query.all()
+    except:
+        return redirect(url_for('error'))
+    return render_template('result.html', title="Result", rides=rides, myride=myride)
 
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
 
-@app.route("/privacy_policy")
-def privacy_policy():
-    return render_template('privacy_policy.html', title='Privacy-Policy')
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -71,7 +54,6 @@ def register():
         db.session.commit()
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -94,11 +76,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
-@app.route("/result")
-def result():
-    return render_template('result.html', title='Result', posts=posts)
-
 def save_picture(formPicture):
     random_hex = secrets.token_hex(8)
     fileName, fileExt = os.path.splitext(formPicture.filename)
@@ -110,18 +87,9 @@ def save_picture(formPicture):
     i.save(picturePath)
     return pictureName
 
-
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    """
-    if current_user.is_authenticated:
-        return render_template('account.html', title=current_user.username)
-    else:
-        flash('Login Required to access Account page', 'warning')
-        return redirect(url_for('login'))
-
-    """
     form=UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -141,6 +109,41 @@ def account():
     return render_template('account.html', title=current_user.username, imageFile=imageFile, form=form)
 
 
+
+@app.route('/my-feedback',  methods=['GET', 'POST'])
+@login_required
+def myFeedback():
+    form = MyFeedback()
+    if form.validate_on_submit():
+        try: 
+            userReview = UserReviews(title=form.title.data, content=form.content.data, rider=current_user)
+            db.session.add(userReview)
+            db.session.commit()
+        except:
+            return redirect(url_for('error'))
+        flash("Thank you for the Feedback!", "info")
+        return redirect(url_for('home'))
+    return render_template('my-feedback.html', title="My Feedback", form=form)
+
+@app.route('/all-feedback')
+def allFeedback():
+    try:
+        feedbacks = UserReviews.query.all()
+    except:
+        return redirect(url_for('error'))
+    return render_template('all-feedbacks.html', title="All Feedbacks", feedbacks=feedbacks)
+
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html', title='About')
+
 @app.route('/error')
 def error():
     return render_template('error.html')
+
+@app.route("/privacy-policy")
+def privacyPolicy():
+    return render_template('privacy-policy.html', title='Privacy Policy')
+

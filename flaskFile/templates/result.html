@@ -3,21 +3,23 @@
 <div class="container">
   <h3>Results are</h3><br>
   <div class="row">
-        {% for post in posts %}
-        <div class="col-sm col-md-auto">
-            <article class="media content-section">
-              <div class="media-body">
-                <div class="article-metadata">
-                  {% if post.Verify %}
-                    <a><h4 style="color: #2b2b2bd2;">{{ post.Username }} <span class="vertify-text">vertified</h4></a>
-                  {% else %}
-                    <a><h4 style="color: #2b2b2bd2;">{{ post.Username }}</h4></a>
-                  {% endif %}
-                  <a><h4 style="color: #2b2b2bd2;">{{ post.Rating }}</h4></a><br>
-                  <a href="mailto:{{ post.Email }}"><p class="btn btn-outline-info">Send Request</p></a>
-            </article>
-          </div>
-        {% endfor %}
+        {% for ride in rides %}
+          {% if ride.destination == myride.destination and ride.source == myride.source and ride.dateOfRide == myride.dateOfRide and myride.id != ride.id %}
+            <div class="col-sm col-md-auto">
+                <article class="media content-section">
+                  <div class="media-body">
+                    <div class="article-metadata">
+                      <!-- {% if ride.Verify %}
+                        <a><h4 style="color: #2b2b2bd2;">{{ ride.Username }} <span class="vertify-text">vertified</h4></a>
+                      {% else %} -->
+                      <a><h4 style="color: #2b2b2bd2;">{{ ride.rider.username }}</h4></a>
+                      <!-- {% endif %} -->
+                      <!-- <a><h4 style="color: #2b2b2bd2;">{{ ride.Rating }}</h4></a><br> -->
+                      <a href="mailto:{{ ride.Email }}"><p class="btn btn-outline-info">Send Request</p></a>
+                </article>
+              </div>
+            {% endif %}
+          {% endfor %}
   </div>
 </div>
 {% endblock content %}

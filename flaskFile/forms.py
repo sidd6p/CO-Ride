@@ -1,15 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField, IntegerField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
 from flaskFile.models import User
 from flask_login import current_user
 
-#inherited from FlaskForm class
 class RegistrationForm(FlaskForm):
-    #The SubmitField class represents an <input> element with a type="submit" attribute.
-    # The first argument to the Field constructors is the label that will be used when rendering the form to HTML.
-    #These are the attributes of RegestrationForm class
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -67,3 +63,8 @@ class UpdateAccountForm(FlaskForm):
             email = User.query.filter_by(email=email.data).first()
             if email:
                 raise ValidationError('That email is taken. Please choose a different one.')
+
+class MyFeedback(FlaskForm):
+    title = StringField('Title', validators=[Length(min=5, max=50), DataRequired()])
+    content = TextAreaField('Feedback', validators=[Length(min=10, max=500)])
+    submit = SubmitField('Send Feedback')
