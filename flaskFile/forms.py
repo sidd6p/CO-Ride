@@ -50,21 +50,18 @@ class UpdateAccountForm(FlaskForm):
 
     def validate_username(self, username):
         if username.data:
-            if username.data == current_user.username:
-                raise ValidationError("New Username cannot same as current Username")
             user = User.query.filter_by(username=username.data).first()
-            if user:
+            if user and username.data != current_user.username:
                 raise ValidationError('That username is taken. Please choose a different one.')
 
     def validate_email(self, email):
         if email.data:
-            if email.data == current_user.email:
-                raise ValidationError("New Email cannot same as current Email")
-            email = User.query.filter_by(email=email.data).first()
-            if email:
+            emails = User.query.filter_by(email=email.data).first()
+            if emails and email.data != current_user.email:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
 class MyFeedback(FlaskForm):
     title = StringField('Title', validators=[Length(min=5, max=50), DataRequired()])
     content = TextAreaField('Feedback', validators=[Length(min=10, max=500)])
+    date = DateField('Feed back date', format='%m/%d/%Y', validators=[DataRequired()])
     submit = SubmitField('Send Feedback')

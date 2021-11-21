@@ -31,10 +31,11 @@ class UserRide(db.Model):
         return f"UserRide('{self.userId}','{self.destination}', '{self.source}', '{self.id}')"
 
 class UserReviews(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    # id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.String(256), nullable=False)
-    userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    dateOfReview = db.Column(db.Date, default=datetime.utcnow, nullable=False)
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
 
     def __repr__(self):
         return f"UserReviews('{self.userId}','{self.id}','{self.content}')"
