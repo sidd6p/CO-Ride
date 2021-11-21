@@ -24,20 +24,60 @@ def findRide():
             ride = UserRide(source=form.source.data, destination=form.destination.data, dateOfRide=form.date.data, preference=form.preference.data, userId=current_user.id)
             db.session.add(ride)
             db.session.commit()
+            rideId = ride.id
         except:
             return redirect(url_for('error'))
-        return redirect(url_for('result'))
+        return redirect(url_for('result', rideId=rideId))
     return render_template('find-ride.html', title='Find-Ride', form=form)
-    
-@app.route("/result")
+
+@app.route("/update-rides/<int:rideId>", methods=['GET', 'POST']) 
+def updateRide(rideId):
+    ride = UserRide.query.get(rideId)
+    form = Ride()
+    if form.validate_on_submit() and request.method == 'POST':
+        ride.destination = form.destination.data or ride.destination
+        ride.source = form.source.data or ride.source
+        ride.dateOfRide = form.date.data or ride.dateOfRide
+        ride.preference = form.preference.data or ride.preference
+        db.session.commit()
+        return redirect(url_for('result', rideId=ride.id))
+    elif request.method == 'GET':
+        form.destination.data = ride.destination
+        form.source.data = ride.source
+        form.date.data = ride.dateOfRide
+        form.preference.data = ride.preference
+    return render_template("update-ride.html", title="Update Ride", form=form, rideId=rideId)
+
+@app.route("/delete-ride/<int:rideId>", methods=['POST', 'GET'])
 @login_required
-def result():
+def deleteRide(rideId):
+    ride = UserRide.query.get(rideId)
+    if request.method == 'POST':
+        if current_user == ride.rider:
+            db.session.delete(ride)
+            db.session.commit()
+            flash("Delete successfully", "warning")
+            return redirect(url_for("allRides"))
+        else:
+            flash("Delele fail due to linvalid user")
+            return redirect(url_for("allRides"))
+    else:
+        return "SHIT"
+
+@app.route("/all-rides")
+def allRides():
+    rides = UserRide.query.filter_by(rider=current_user).all()
+    return render_template("your-rides.html", title="My Rides", rides=rides)
+
+@app.route("/result/<int:rideId>")
+@login_required
+def result(rideId):
     try:
-        myride = UserRide.query.first()
-        rides = UserRide.query.all()
+        myRide = UserRide.query.filter_by(id = rideId).first()
+        allRides = UserRide.query.filter_by(rider = current_user).all()
     except:
         return redirect(url_for('error'))
-    return render_template('result.html', title="Result", rides=rides, myride=myride)
+    return render_template('result.html', title="Result", allRides = allRides, myRide = myRide)
 
 
 
@@ -114,23 +154,28 @@ def account():
 @login_required
 def myFeedback():
     form = MyFeedback()
+    userFeedback = UserReviews.query.filter_by(author = current_user).first()
     if form.validate_on_submit():
-        try: 
-            userReview = UserReviews(title=form.title.data, content=form.content.data, rider=current_user)
+        if userFeedback != None:
+            userFeedback.title = form.title.data
+            userFeedback.content = form.title.data
+            userFeedback.dateOfReview = form.date.data
+            db.session.commit()
+            flash("Thank you for the Feedback!", "info")
+        else:      
+            userReview = UserReviews(title=form.title.data, content=form.content.data, author=current_user)
             db.session.add(userReview)
             db.session.commit()
-        except:
-            return redirect(url_for('error'))
-        flash("Thank you for the Feedback!", "info")
-        return redirect(url_for('home'))
+            flash("Thank you for the Feedback!", "info")
+        return redirect(url_for('allFeedback'))
+    elif request.method == 'GET' and userFeedback:
+        form.title.data = userFeedback.title
+        form.content.data = userFeedback.content
     return render_template('my-feedback.html', title="My Feedback", form=form)
 
 @app.route('/all-feedback')
 def allFeedback():
-    try:
-        feedbacks = UserReviews.query.all()
-    except:
-        return redirect(url_for('error'))
+    feedbacks = UserReviews.query.all()
     return render_template('all-feedbacks.html', title="All Feedbacks", feedbacks=feedbacks)
 
 

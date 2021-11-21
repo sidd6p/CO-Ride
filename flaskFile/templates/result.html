@@ -3,8 +3,8 @@
 <div class="container">
   <h3>Results are</h3><br>
   <div class="row">
-        {% for ride in rides %}
-          {% if ride.destination == myride.destination and ride.source == myride.source and ride.dateOfRide == myride.dateOfRide and myride.id != ride.id %}
+        {% for ride in allRides %}
+          {% if myRide.destination == ride.destination and myRide.source == ride.source and myRide.dateOfRide == ride.dateOfRide %}
             <div class="col-sm col-md-auto">
                 <article class="media content-section">
                   <div class="media-body">
