@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Selec
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
 from flaskFile.models import User
 from flask_login import current_user
+from datetime import datetime
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -40,6 +41,11 @@ class Ride(FlaskForm):
     def validate_destination(self, destination):
         if self.source.data == self.destination.data:
             raise ValidationError("Destination and Source cannot be same")
+    
+    def validate_date(self, date):
+        if date.data <= datetime.date(datetime.utcnow()):
+            raise ValidationError("Invalid date of Ride")
+
 
 
 class UpdateAccountForm(FlaskForm):

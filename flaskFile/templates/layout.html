@@ -11,7 +11,7 @@
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
       {% if title %}
-          <title>Flask Blog - {{ title }}</title>
+          <title>Co-Ride- {{ title }}</title>
       {% else %}
           <title>Flask Blog</title>
       {% endif %}
@@ -27,8 +27,6 @@
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{{ url_for('findRide') }}">Find Ride</a>
-                <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
-                <a class="nav-item nav-link" href="{{ url_for('privacyPolicy') }}">Privacy policy</a>
               </div>
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
@@ -68,6 +66,16 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
   <footer>
-    &copy; Copyright 2021 Co-Ride<br>
+    <div class="container">
+      <div class="d-flex justify-content-center">
+        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
+        <a class="nav-item nav-link" href="{{ url_for('home') }}">Contact</a>
+        <a class="nav-item nav-link" href="{{ url_for('privacyPolicy') }}">Privacy policy</a>
+      </div>
+      <br>
+      <div class="d-flex justify-content-center">
+        &copy; Copyright 2021 Co-Ride<br>
+      </div>
+    </div>
   </footer>
 </html>

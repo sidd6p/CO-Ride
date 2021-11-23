@@ -1,25 +1,32 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
-  <h3>Results are</h3><br>
-  <div class="row">
-        {% for ride in allRides %}
-          {% if myRide.destination == ride.destination and myRide.source == ride.source and myRide.dateOfRide == ride.dateOfRide %}
-            <div class="col-sm col-md-auto">
-                <article class="media content-section">
-                  <div class="media-body">
-                    <div class="article-metadata">
-                      <!-- {% if ride.Verify %}
-                        <a><h4 style="color: #2b2b2bd2;">{{ ride.Username }} <span class="vertify-text">vertified</h4></a>
-                      {% else %} -->
-                      <a><h4 style="color: #2b2b2bd2;">{{ ride.rider.username }}</h4></a>
-                      <!-- {% endif %} -->
-                      <!-- <a><h4 style="color: #2b2b2bd2;">{{ ride.Rating }}</h4></a><br> -->
-                      <a href="mailto:{{ ride.Email }}"><p class="btn btn-outline-info">Send Request</p></a>
-                </article>
+  <div class="container">
+    <h3>Results are</h3><br>
+    <div class="row">
+      {% for ride in avalRide.items %}
+        <div class="col-sm col-md-auto">
+          <article class="media content-section">
+            <div class="media-body">
+              <div class="article-metadata">
+                <!-- {% if ride.Verify %}
+                  <a><h4 style="color: #2b2b2bd2;">{{ ride.Username }} <span class="vertify-text">vertified</h4></a>
+                {% else %} -->
+                <a><h4 style="color: #2b2b2bd2;">{{ ride.rider.username }}</h4></a>
+                <!-- {% endif %} -->
+                <!-- <a><h4 style="color: #2b2b2bd2;">{{ ride.Rating }}</h4></a><br> -->
+                <a href="mailto:{{ ride.Email }}"><p class="btn btn-outline-info">Send Request</p></a>
               </div>
-            {% endif %}
-          {% endfor %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+      {% for pageNum in avalRide.iter_pages() %}
+        {% if pageNum != curPage %}
+          <a class = "btn btn-outline-info" href="{{ url_for('result', page=pageNum, rideId=rideId) }}">{{ pageNum }}</a>
+        {% else %}
+          <a class = "btn btnlight" href="">{{ pageNum }}</a>
+        {% endif %}
+      {% endfor %}
   </div>
-</div>
 {% endblock content %}

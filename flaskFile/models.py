@@ -23,7 +23,7 @@ class UserRide(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     destination = db.Column(db.String(20), nullable=False)
     source = db.Column(db.String(100), nullable=False)
-    dateOfRide = db.Column(db.Date, default=datetime.utcnow, nullable=False)
+    dateOfRide = db.Column(db.Date, nullable=False)
     preference = db.Column(db.String(100), nullable=True)
     userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
