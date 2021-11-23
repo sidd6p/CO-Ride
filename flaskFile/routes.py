@@ -65,19 +65,28 @@ def deleteRide(rideId):
         return "SHIT"
 
 @app.route("/all-rides")
+@login_required
 def allRides():
-    rides = UserRide.query.filter_by(rider=current_user).all()
-    return render_template("your-rides.html", title="My Rides", rides=rides)
+    pageNum = request.args.get('page', 1, type = int)
+    rides = UserRide.query.filter(UserRide.rider == current_user)\
+    .order_by(UserRide.dateOfRide.desc())\
+    .paginate(per_page = 4, page = pageNum)
+    return render_template("your-rides.html", title="My Rides", rides=rides, curPage = pageNum)
 
 @app.route("/result/<int:rideId>")
 @login_required
 def result(rideId):
     try:
-        myRide = UserRide.query.filter_by(id = rideId).first()
-        allRides = UserRide.query.filter_by(rider = current_user).all()
+        pageNum = request.args.get('page', 1, type = int)
+        myRide = UserRide.query.filter(UserRide.id == rideId).first()
+        avalRide = UserRide.query.filter(UserRide.rider != myRide.rider)\
+            .filter(UserRide.destination == myRide.destination)\
+            .filter(UserRide.source == myRide.source)\
+            .filter(UserRide.dateOfRide == myRide.dateOfRide)
+        avalRide = avalRide.paginate(per_page = 4, page = pageNum)
     except:
         return redirect(url_for('error'))
-    return render_template('result.html', title="Result", allRides = allRides, myRide = myRide)
+    return render_template('result.html', title="Result", avalRide = avalRide, rideId=myRide.id, curPage = pageNum)
 
 
 
@@ -153,25 +162,26 @@ def account():
 @app.route('/my-feedback',  methods=['GET', 'POST'])
 @login_required
 def myFeedback():
-    form = MyFeedback()
-    userFeedback = UserReviews.query.filter_by(author = current_user).first()
-    if form.validate_on_submit():
-        if userFeedback != None:
-            userFeedback.title = form.title.data
-            userFeedback.content = form.title.data
-            userFeedback.dateOfReview = form.date.data
-            db.session.commit()
-            flash("Thank you for the Feedback!", "info")
-        else:      
-            userReview = UserReviews(title=form.title.data, content=form.content.data, author=current_user)
-            db.session.add(userReview)
-            db.session.commit()
-            flash("Thank you for the Feedback!", "info")
-        return redirect(url_for('allFeedback'))
-    elif request.method == 'GET' and userFeedback:
-        form.title.data = userFeedback.title
-        form.content.data = userFeedback.content
-    return render_template('my-feedback.html', title="My Feedback", form=form)
+    return redirect(url_for("error"))
+    # form = MyFeedback()
+    # userFeedback = UserReviews.query.filter_by(author = current_user).first()
+    # if form.validate_on_submit():
+    #     if userFeedback != None:
+    #         userFeedback.title = form.title.data
+    #         userFeedback.content = form.title.data
+    #         userFeedback.dateOfReview = form.date.data
+    #         db.session.commit()
+    #         flash("Thank you for the Feedback!", "info")
+    #     else:      
+    #         userReview = UserReviews(title=form.title.data, content=form.content.data, author=current_user)
+    #         db.session.add(userReview)
+    #         db.session.commit()
+    #         flash("Thank you for the Feedback!", "info")
+    #     return redirect(url_for('allFeedback'))
+    # elif request.method == 'GET' and userFeedback:
+    #     form.title.data = userFeedback.title
+    #     form.content.data = userFeedback.content
+    # return render_template('my-feedback.html', title="My Feedback", form=form)
 
 @app.route('/all-feedback')
 def allFeedback():
