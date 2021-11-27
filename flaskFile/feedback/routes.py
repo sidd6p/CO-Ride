@@ -8,7 +8,7 @@ feedback = Blueprint('feedback', __name__)
 @feedback.route('/my-feedback',  methods=['GET', 'POST'])
 @login_required
 def myFeedback():
-    return redirect(url_for('main.error'))
+    return redirect(url_for('general.errorHandler'))
     # form = MyFeedback()
     # userFeedback = UserReviews.query.filter_by(author = current_user).first()
     # if form.validate_on_submit():
@@ -27,10 +27,10 @@ def myFeedback():
     # elif request.method == 'GET' and userFeedback:
     #     form.title.data = userFeedback.title
     #     form.content.data = userFeedback.content
-    # return render_template('my-feedback.html', title="My Feedback", form=form)
+    # return render_template('feedback/my-feedback.html', title="My Feedback", form=form)
 
 @feedback.route('/all-feedback')
 def allFeedback():
     feedbacks = UserReviews.query.all()
-    return render_template('all-feedbacks.html', title="All Feedbacks", feedbacks=feedbacks)
+    return render_template('feedback/all-feedbacks.html', title="All Feedbacks", feedbacks=feedbacks)
 

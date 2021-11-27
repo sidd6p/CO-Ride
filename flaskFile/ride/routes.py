@@ -17,9 +17,9 @@ def findRide():
             db.session.commit()
             rideId = ride.id
         except:
-            return redirect(url_for('main.error'))
+            return redirect(url_for('general.errorHandler'))
         return redirect(url_for('ride.result', rideId=rideId))
-    return render_template('find-ride.html', title='Find-Ride', form=form)
+    return render_template('ride/find-ride.html', title='Find-Ride', form=form)
 
 @ride.route("/update-rides/<int:rideId>", methods=['GET', 'POST']) 
 def updateRide(rideId):
@@ -37,7 +37,7 @@ def updateRide(rideId):
         form.source.data = ride.source
         form.date.data = ride.dateOfRide
         form.preference.data = ride.preference
-    return render_template("update-ride.html", title="Update Ride", form=form, rideId=rideId)
+    return render_template("ride/update-ride.html", title="Update Ride", form=form, rideId=rideId)
 
 @ride.route("/delete-ride/<int:rideId>", methods=['POST', 'GET'])
 @login_required
@@ -62,7 +62,7 @@ def allRides():
     rides = UserRide.query.filter(UserRide.rider == current_user)\
     .order_by(UserRide.dateOfRide.desc())\
     .paginate(per_page = 4, page = pageNum)
-    return render_template("your-rides.html", title="My Rides", rides=rides, curPage = pageNum)
+    return render_template("ride/your-rides.html", title="My Rides", rides=rides, curPage = pageNum)
 
 @ride.route("/result/<int:rideId>")
 @login_required
@@ -76,6 +76,6 @@ def result(rideId):
             .filter(UserRide.dateOfRide == myRide.dateOfRide)
         avalRide = avalRide.paginate(per_page = 4, page = pageNum)
     except:
-        return redirect(url_for('main.error'))
-    return render_template('result.html', title="Result", avalRide = avalRide, rideId=myRide.id, curPage = pageNum)
+        return redirect(url_for('general.errorHandler'))
+    return render_template('ride/result.html', title="Result", avalRide = avalRide, rideId=myRide.id, curPage = pageNum)
 

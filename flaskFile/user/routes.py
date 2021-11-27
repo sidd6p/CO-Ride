@@ -11,7 +11,7 @@ user = Blueprint('user', __name__)
 @user.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('general.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         flash('Welcome to Co-Ride', 'info')
@@ -19,24 +19,24 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('main.home'))
-    return render_template('register.html', title='Register', form=form)
+        return redirect(url_for('general.home'))
+    return render_template('user/register.html', title='Register', form=form)
 
 @user.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('general.home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             flash('Login successful', 'info')
-            nextPage = request.args.get('next')
-            return redirect(nextPage) if nextPage else redirect(url_for('main.home'))
+            nextPage = request.args.get('next', 'home')
+            return redirect(nextPage)
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+    return render_template('user/login.html', title='Login', form=form)
 
 @user.route('/logout')
 def logout():
@@ -62,20 +62,20 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title=current_user.username, imageFile=imageFile, form=form)
+    return render_template('user/account.html', title=current_user.username, imageFile=imageFile, form=form)
 
 @user.route('/reset-password-request', methods=['POST', 'GET'])
 def resetPasswordRequest():
     # if current_user.is_authenticated:
     #     flash('You must log out first', 'warning')
-    #     return redirect(url_for('main.home'))
+    #     return redirect(url_for('general.home'))
     form = PasswordResetRequest()
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.email.data).first()
         sendEmail(user)
         flash("An Email has been sent to your regestired Email to reset your password", 'info')
         return redirect(url_for('user.login'))
-    return render_template('reset-password-request.html', title = 'Reset Password Request', form=form)
+    return render_template('user/reset-password-request.html', title = 'Reset Password Request', form=form)
 
 @user.route('/reset-password/<token>', methods=['POST', 'GET'])
 def resetPassword(token):
@@ -90,5 +90,5 @@ def resetPassword(token):
         db.session.commit()
         flash('Password reset Successfully', 'info')
         return redirect(url_for('user.login'))
-    return render_template('reset-password.html', title = 'Reset Password', form=form)
+    return render_template('user/reset-password.html', title = 'Reset Password', form=form)
 

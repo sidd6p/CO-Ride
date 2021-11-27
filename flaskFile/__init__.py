@@ -25,8 +25,8 @@ def createApp(configClass=Config):
     app.register_blueprint(user)
     from flaskFile.feedback.routes import feedback
     app.register_blueprint(feedback)
-    from flaskFile.main.routes import main
-    app.register_blueprint(main)
+    from flaskFile.general.routes import general
+    app.register_blueprint(general)
     from flaskFile.ride.routes import ride
     app.register_blueprint(ride)
 
