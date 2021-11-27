@@ -15,10 +15,10 @@
                                 <div class="row">
                                     <div class="d-flex justify-content-between">
                                         <div class="col">
-                                            <a class="btn btn-outline-info btn-sm" href="{{ url_for('updateRide', rideId=ride.id) }}">Update Ride</a>
+                                            <a class="btn btn-outline-info btn-sm" href="{{ url_for('ride.updateRide', rideId=ride.id) }}">Update Ride</a>
                                         </div>
                                         <div  class="col">
-                                            <form action="{{ url_for('deleteRide', rideId=ride.id) }}" method="POST">
+                                            <form action="{{ url_for('ride.deleteRide', rideId=ride.id) }}" method="POST">
                                                 <input class="btn btn-warning btn-sm" type="submit" value="Delete">
                                             </form>
                                         </div>
@@ -33,7 +33,7 @@
             {% for pageNum in rides.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=3) %}
                 {% if pageNum %}
                     {% if pageNum != curPage %}
-                        <a class = "btn btn-outline-info" href="{{ url_for('allRides', page=pageNum) }}">{{ pageNum }}</a>
+                        <a class = "btn btn-outline-info" href="{{ url_for('ride.allRides', page=pageNum) }}">{{ pageNum }}</a>
                     {% else %}
                         <a class = "btn btn-light" href="">{{ pageNum }}</a>
                     {% endif %}
