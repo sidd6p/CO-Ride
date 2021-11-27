@@ -71,3 +71,18 @@ class MyFeedback(FlaskForm):
     content = TextAreaField('Feedback', validators=[Length(min=10, max=500)])
     date = DateField('Feed back date', format='%m/%d/%Y', validators=[DataRequired()])
     submit = SubmitField('Send Feedback')
+
+
+class PasswordResetRequest(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+    
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if not user:
+            raise ValidationError('No User with this Email account')
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirmPassword = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
+    submit = StringField('Reset Password now')
