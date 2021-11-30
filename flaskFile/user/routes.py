@@ -4,7 +4,7 @@ from flaskFile.models import User
 from flaskFile import db, bcrypt
 from flaskFile.user.utils import save_picture, sendEmail
 from flaskFile.user.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                    PasswordResetRequest, PasswordResetForm) 
+                                PasswordResetRequest, PasswordResetForm) 
 
 user = Blueprint('user', __name__)
 
@@ -46,6 +46,14 @@ def logout():
 @user.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('user/account.html', title=current_user.username, imageFile=imageFile)
+
+
+
+@user.route('/update-account', methods=['GET', 'POST'])
+@login_required
+def updateAccount():
     form=UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -62,13 +70,11 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     imageFile = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('user/account.html', title=current_user.username, imageFile=imageFile, form=form)
+    return render_template('user/update-account.html', title=current_user.username, imageFile=imageFile, form=form)
+
 
 @user.route('/reset-password-request', methods=['POST', 'GET'])
 def resetPasswordRequest():
-    # if current_user.is_authenticated:
-    #     flash('You must log out first', 'warning')
-    #     return redirect(url_for('general.home'))
     form = PasswordResetRequest()
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.email.data).first()
