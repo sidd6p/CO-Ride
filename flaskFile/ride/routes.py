@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from flaskFile.models import UserRide
 from flaskFile import db
 from flaskFile.ride.forms import Ride
+from sqlalchemy import func
 
 ride = Blueprint('ride', __name__)
 
@@ -71,8 +72,8 @@ def result(rideId):
         pageNum = request.args.get('page', 1, type = int)
         myRide = UserRide.query.filter(UserRide.id == rideId).first()
         avalRide = UserRide.query.filter(UserRide.rider != myRide.rider)\
-            .filter(UserRide.destination == myRide.destination)\
-            .filter(UserRide.source == myRide.source)\
+            .filter(func.lower(UserRide.destination) == func.lower(myRide.destination))\
+            .filter(func.lower(UserRide.source) == func.lower(myRide.source))\
             .filter(UserRide.dateOfRide == myRide.dateOfRide)
         avalRide = avalRide.paginate(per_page = 4, page = pageNum)
     except:
